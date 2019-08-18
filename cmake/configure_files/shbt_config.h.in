@@ -1,0 +1,6 @@
+#pragma once
+
+#cmakedefine SHBT_HAVE_MPI
+
+#cmakedefine SHBT_USE_ABI_DEMANGLER
+#cmakedefine SHBT_USE_BUILTIN_IA64_DEMANGLER
