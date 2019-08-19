@@ -31,6 +31,7 @@ OS | Architecture
 -- | ------------
 Linux | x86-64
 Linux | POWER / PPC64
+macOS | x86-64
 
 If you would like to test and/or port SHBT to a different OS / arch
 combination, please feel free.
@@ -42,6 +43,10 @@ will need a standard C/C++ toolchain and
 [libunwind](https://www.nongnu.org/libunwind/) (see also
 [the LLVM version](https://github.com/llvm-mirror/libunwind)),
 which is probably installed by default with your toolchain.
+
+_Note_: On macOS, libunwind is not installed automatically. The
+easiest solution is to use Homebrew to install LLVM and then point
+CMake to it with `-D LIBUNWIND_DIR`.
 
 A simple build and install is the following:
 ```
