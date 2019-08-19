@@ -145,6 +145,35 @@ static struct shbt_signal_info sig_info[] = {
   {0, NULL, NULL, 0, NULL}
 };
 
+// Generic signal codes.
+static const struct shbt_signal_code_info generic_codes[] = {
+#ifdef SI_USER
+  {SI_USER, "USER", "Signal sent via kill"},
+#endif
+#ifdef SI_KERNEL
+  {SI_KERNEL, "KERNEL", "Signal sent by the kernel"},
+#endif
+#ifdef SI_QUEUE
+  {SI_QUEUE, "QUEUE", "Signal sent via sigqueue"},
+#endif
+#ifdef SI_TIMER
+  {SI_TIMER, "TIMER", "POSIX timer expired"},
+#endif
+#ifdef SI_MESGQ
+  {SI_MESGQ, "MESGQ", "POSIX message queue state changed"},
+#endif
+#ifdef SI_ASYNCIO
+  {SI_ASYNCIO, "ASYNCIO", "AIO completed"},
+#endif
+#ifdef SI_SIGIO
+  {SI_SIGIO, "SIGIO", "Queued SIGIO"},
+#endif
+#ifdef SI_TKILL
+  {SI_TKILL, "TKILL", "Signal sent via tkill/tgkill"},
+#endif
+  {0, NULL, NULL}
+};
+
 // Information for signal codes for particular signals.
 #ifdef SIGILL
 static const struct shbt_signal_code_info sigill_codes[] = {
@@ -348,12 +377,47 @@ void shbt_print_signal(int sig_num, siginfo_t* info) {
     shbt_print_to_stderr(str_buf);
   }
 #endif
-  shbt_print_to_stderr("\n");
   // Attempt to provide additional information when available.
   // Note: While SIGCHLD does provide additional info, it doesn't make much
   // sense to attempt to interpret it here, since the default action is to
   // ignore it.
   if (info != NULL) {
+    // Attempt to gather generic information.
+    bool was_code_generic = false;
+    {
+      const struct shbt_signal_code_info* code_info = shbt_get_signal_code_info(
+        generic_codes, info->si_code);
+      if (code_info != NULL) {
+        was_code_generic = true;
+        shbt_print_to_stderr("\n  ");
+        shbt_print_to_stderr(code_info->code_name);
+        shbt_print_to_stderr(" - ");
+        shbt_print_to_stderr(code_info->code_desc);
+      } else {
+        // Only print a newline if we don't have a generic code here.
+        shbt_print_to_stderr("\n");
+      }
+      // Print PID/UID info for kill/sigqueue.
+      // TODO: It would make sense for tgkill to also fill this in, but there
+      // is no documentation about that.
+      if (
+#ifdef SI_USER
+        info->si_code == SI_USER ||
+#endif
+#ifdef SI_QUEUE
+        info->si_code == SI_QUEUE
+#else
+        0
+#endif
+        ) {
+        shbt_print_to_stderr(" - Source PID: ");
+        shbt_itoa(info->si_pid, str_buf, sizeof(str_buf), 10, 0);
+        shbt_print_to_stderr(str_buf);
+        shbt_print_to_stderr(" - UID: ");
+        shbt_itoa(info->si_uid, str_buf, sizeof(str_buf), 10, 0);
+        shbt_print_to_stderr(str_buf);
+      }
+    }
 #ifdef SIGILL
     if (sig_num == SIGILL) {
       shbt_print_to_stderr("  ");
@@ -363,7 +427,7 @@ void shbt_print_signal(int sig_num, siginfo_t* info) {
         shbt_print_to_stderr(code_info->code_name);
         shbt_print_to_stderr(" - ");
         shbt_print_to_stderr(code_info->code_desc);
-      } else {
+      } else if (!was_code_generic) {
         shbt_print_to_stderr("Unknown signal code ");
         shbt_itoa(info->si_code, str_buf, sizeof(str_buf), 10, 0);
         shbt_print_to_stderr(str_buf);
@@ -383,7 +447,7 @@ void shbt_print_signal(int sig_num, siginfo_t* info) {
         shbt_print_to_stderr(code_info->code_name);
         shbt_print_to_stderr(" - ");
         shbt_print_to_stderr(code_info->code_desc);
-      } else {
+      } else if (!was_code_generic) {
         shbt_print_to_stderr("Unknown signal code ");
         shbt_itoa(info->si_code, str_buf, sizeof(str_buf), 10, 0);
         shbt_print_to_stderr(str_buf);
@@ -403,7 +467,7 @@ void shbt_print_signal(int sig_num, siginfo_t* info) {
         shbt_print_to_stderr(code_info->code_name);
         shbt_print_to_stderr(" - ");
         shbt_print_to_stderr(code_info->code_desc);
-      } else {
+      } else if (!was_code_generic) {
         shbt_print_to_stderr("Unknown signal code ");
         shbt_itoa(info->si_code, str_buf, sizeof(str_buf), 10, 0);
         shbt_print_to_stderr(str_buf);
@@ -423,7 +487,7 @@ void shbt_print_signal(int sig_num, siginfo_t* info) {
         shbt_print_to_stderr(code_info->code_name);
         shbt_print_to_stderr(" - ");
         shbt_print_to_stderr(code_info->code_desc);
-      } else {
+      } else if (!was_code_generic) {
         shbt_print_to_stderr("Unknown signal code ");
         shbt_itoa(info->si_code, str_buf, sizeof(str_buf), 10, 0);
         shbt_print_to_stderr(str_buf);
@@ -443,7 +507,7 @@ void shbt_print_signal(int sig_num, siginfo_t* info) {
         shbt_print_to_stderr(code_info->code_name);
         shbt_print_to_stderr(" - ");
         shbt_print_to_stderr(code_info->code_desc);
-      } else {
+      } else if (!was_code_generic) {
         shbt_print_to_stderr("Unknown signal code ");
         shbt_itoa(info->si_code, str_buf, sizeof(str_buf), 10, 0);
         shbt_print_to_stderr(str_buf);
@@ -472,7 +536,7 @@ void shbt_print_signal(int sig_num, siginfo_t* info) {
         shbt_print_to_stderr(code_info->code_name);
         shbt_print_to_stderr(" - ");
         shbt_print_to_stderr(code_info->code_desc);
-      } else {
+      } else if (!was_code_generic) {
         shbt_print_to_stderr("Unknown signal code ");
         shbt_itoa(info->si_code, str_buf, sizeof(str_buf), 10, 0);
         shbt_print_to_stderr(str_buf);
@@ -489,7 +553,7 @@ void shbt_print_signal(int sig_num, siginfo_t* info) {
         shbt_print_to_stderr(code_info->code_name);
         shbt_print_to_stderr(" - ");
         shbt_print_to_stderr(code_info->code_desc);
-      } else {
+      } else if (!was_code_generic) {
         shbt_print_to_stderr("Unknown signal code ");
         shbt_itoa(info->si_code, str_buf, sizeof(str_buf), 10, 0);
         shbt_print_to_stderr(str_buf);
@@ -499,6 +563,10 @@ void shbt_print_signal(int sig_num, siginfo_t* info) {
 #endif  // SIGSYS
     {
       // No special info available.
+      if (was_code_generic) {
+        // Add newline for generic code.
+        shbt_print_to_stderr("\n");
+      }
     }
   }
 }
