@@ -6,6 +6,7 @@ set(TEST_SOURCES
   intdiv2.c
   intdiv3.c
   bus.c
+  wait.c
   demangle.c
   )
 
