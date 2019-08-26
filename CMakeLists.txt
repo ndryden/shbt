@@ -70,6 +70,12 @@ if (SHBT_HAVE_MPI)
   target_link_libraries(shbt PUBLIC MPI::MPI_C)
 endif ()
 
+include(CMakePackageConfigHelpers)
+
+write_basic_package_version_file(
+  "${CMAKE_BINARY_DIR}/SHBTConfigVersion.cmake" VERSION
+  ${SHBT_VERSION} COMPATIBILITY SameMinorVersion)
+
 install(
   TARGETS shbt
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
@@ -87,4 +93,8 @@ install(
 install(
   FILES "${CMAKE_BINARY_DIR}/shbt_config.h"
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+  )
+install(
+  FILES "${CMAKE_BINARY_DIR}/SHBTConfigVersion.cmake"
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/shbt
   )
