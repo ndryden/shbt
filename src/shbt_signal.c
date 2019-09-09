@@ -14,13 +14,13 @@
  */
 
 #define _XOPEN_SOURCE 500  // For additional signal information.
-#include <stdlib.h>
-#include <stdio.h>
-#include <signal.h>
-#include <unistd.h>
 #include <errno.h>
-#include <string.h>
+#include <signal.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #include "shbt/shbt.h"
 #include "shbt/shbt_internal.h"
@@ -142,8 +142,7 @@ static struct shbt_signal_info sig_info[] = {
 #ifdef SIGWINCH
   {SIGWINCH, "WINCH", "Window resize", 0, NULL},
 #endif
-  {0, NULL, NULL, 0, NULL}
-};
+  {0, NULL, NULL, 0, NULL}};
 
 // Generic signal codes.
 static const struct shbt_signal_code_info generic_codes[] = {
@@ -171,8 +170,7 @@ static const struct shbt_signal_code_info generic_codes[] = {
 #ifdef SI_TKILL
   {SI_TKILL, "TKILL", "Signal sent via tkill/tgkill"},
 #endif
-  {0, NULL, NULL}
-};
+  {0, NULL, NULL}};
 
 // Information for signal codes for particular signals.
 #ifdef SIGILL
@@ -201,8 +199,7 @@ static const struct shbt_signal_code_info sigill_codes[] = {
 #ifdef ILL_BADSTK
   {ILL_BADSTK, "BADSTK", "Internal stack error"},
 #endif
-  {0, NULL, NULL}
-};
+  {0, NULL, NULL}};
 #endif  // SIGILL
 #ifdef SIGFPE
 static const struct shbt_signal_code_info sigfpe_codes[] = {
@@ -230,8 +227,7 @@ static const struct shbt_signal_code_info sigfpe_codes[] = {
 #ifdef FPE_FLTSUB
   {FPE_FLTSUB, "FLTSUB", "Subscript out of range"},
 #endif
-  {0, NULL, NULL}
-};
+  {0, NULL, NULL}};
 #endif  // SIGFPE
 #ifdef SIGSEGV
 static const struct shbt_signal_code_info sigsegv_codes[] = {
@@ -247,8 +243,7 @@ static const struct shbt_signal_code_info sigsegv_codes[] = {
 #ifdef SEGV_PKUERR
   {SEGV_PKUERR, "PKUERR", "Access denied by memory protection keys"},
 #endif
-  {0, NULL, NULL}
-};
+  {0, NULL, NULL}};
 #endif  // SIGSEGV
 #ifdef SIGBUS
 static const struct shbt_signal_code_info sigbus_codes[] = {
@@ -269,8 +264,7 @@ static const struct shbt_signal_code_info sigbus_codes[] = {
   {BUS_MCEERR_AO, "MCEERR_AO",
    "Hardware memory error detected in process but not consumed"},
 #endif
-  {0, NULL, NULL}
-};
+  {0, NULL, NULL}};
 #endif  // SIGBUS
 #ifdef SIGTRAP
 static const struct shbt_signal_code_info sigtrap_codes[] = {
@@ -286,8 +280,7 @@ static const struct shbt_signal_code_info sigtrap_codes[] = {
 #ifdef TRAP_HWBKPT
   {TRAP_HWBKPT, "HWBKPT", "Hardware breakpoint/watchpoint"},
 #endif
-  {0, NULL, NULL}
-};
+  {0, NULL, NULL}};
 #endif  // SIGTRAP
 #if defined(SIGIO) || defined(SIGPOLL)
 static const struct shbt_signal_code_info sigpoll_codes[] = {
@@ -309,16 +302,14 @@ static const struct shbt_signal_code_info sigpoll_codes[] = {
 #ifdef POLL_HUP
   {POLL_HUP, "HUP", "Device disconnected"},
 #endif
-  {0, NULL, NULL}
-};
+  {0, NULL, NULL}};
 #endif  // defined(SIGIO) || defined(SIGPOLL)
 #ifdef SIGSYS
 static const struct shbt_signal_code_info sigsys_codes[] = {
 #ifdef SYS_SECCOMP
   {SYS_SECCOMP, "SECCOMP", "Triggered by seccomp filter rule"},
 #endif
-  {0, NULL, NULL}
-};
+  {0, NULL, NULL}};
 #endif
 
 #ifdef SHBT_HAVE_MPI
@@ -385,8 +376,8 @@ void shbt_print_signal(int sig_num, siginfo_t* info) {
     // Attempt to gather generic information.
     bool was_code_generic = false;
     {
-      const struct shbt_signal_code_info* code_info = shbt_get_signal_code_info(
-        generic_codes, info->si_code);
+      const struct shbt_signal_code_info* code_info =
+        shbt_get_signal_code_info(generic_codes, info->si_code);
       if (code_info != NULL) {
         was_code_generic = true;
         shbt_print_to_stderr("\n  ");
@@ -409,7 +400,7 @@ void shbt_print_signal(int sig_num, siginfo_t* info) {
 #else
         0
 #endif
-        ) {
+      ) {
         shbt_print_to_stderr(" - Source PID: ");
         shbt_itoa(info->si_pid, str_buf, sizeof(str_buf), 10, 0);
         shbt_print_to_stderr(str_buf);
@@ -421,8 +412,8 @@ void shbt_print_signal(int sig_num, siginfo_t* info) {
 #ifdef SIGILL
     if (sig_num == SIGILL) {
       shbt_print_to_stderr("  ");
-      const struct shbt_signal_code_info* code_info = shbt_get_signal_code_info(
-        sigill_codes, info->si_code);
+      const struct shbt_signal_code_info* code_info =
+        shbt_get_signal_code_info(sigill_codes, info->si_code);
       if (code_info != NULL) {
         shbt_print_to_stderr(code_info->code_name);
         shbt_print_to_stderr(" - ");
@@ -441,8 +432,8 @@ void shbt_print_signal(int sig_num, siginfo_t* info) {
 #ifdef SIGFPE
     if (sig_num == SIGFPE) {
       shbt_print_to_stderr("  ");
-      const struct shbt_signal_code_info* code_info = shbt_get_signal_code_info(
-        sigfpe_codes, info->si_code);
+      const struct shbt_signal_code_info* code_info =
+        shbt_get_signal_code_info(sigfpe_codes, info->si_code);
       if (code_info != NULL) {
         shbt_print_to_stderr(code_info->code_name);
         shbt_print_to_stderr(" - ");
@@ -461,8 +452,8 @@ void shbt_print_signal(int sig_num, siginfo_t* info) {
 #ifdef SIGSEGV
     if (sig_num == SIGSEGV) {
       shbt_print_to_stderr("  ");
-      const struct shbt_signal_code_info* code_info = shbt_get_signal_code_info(
-        sigsegv_codes, info->si_code);
+      const struct shbt_signal_code_info* code_info =
+        shbt_get_signal_code_info(sigsegv_codes, info->si_code);
       if (code_info != NULL) {
         shbt_print_to_stderr(code_info->code_name);
         shbt_print_to_stderr(" - ");
@@ -481,8 +472,8 @@ void shbt_print_signal(int sig_num, siginfo_t* info) {
 #ifdef SIGBUS
     if (sig_num == SIGBUS) {
       shbt_print_to_stderr("  ");
-      const struct shbt_signal_code_info* code_info = shbt_get_signal_code_info(
-        sigbus_codes, info->si_code);
+      const struct shbt_signal_code_info* code_info =
+        shbt_get_signal_code_info(sigbus_codes, info->si_code);
       if (code_info != NULL) {
         shbt_print_to_stderr(code_info->code_name);
         shbt_print_to_stderr(" - ");
@@ -501,8 +492,8 @@ void shbt_print_signal(int sig_num, siginfo_t* info) {
 #ifdef SIGTRAP
     if (sig_num == SIGTRAP) {
       shbt_print_to_stderr("  ");
-      const struct shbt_signal_code_info* code_info = shbt_get_signal_code_info(
-        sigtrap_codes, info->si_code);
+      const struct shbt_signal_code_info* code_info =
+        shbt_get_signal_code_info(sigtrap_codes, info->si_code);
       if (code_info != NULL) {
         shbt_print_to_stderr(code_info->code_name);
         shbt_print_to_stderr(" - ");
@@ -530,8 +521,8 @@ void shbt_print_signal(int sig_num, siginfo_t* info) {
 #endif
       ) {
       shbt_print_to_stderr("  ");
-      const struct shbt_signal_code_info* code_info = shbt_get_signal_code_info(
-        sigpoll_codes, info->si_code);
+      const struct shbt_signal_code_info* code_info =
+        shbt_get_signal_code_info(sigpoll_codes, info->si_code);
       if (code_info != NULL) {
         shbt_print_to_stderr(code_info->code_name);
         shbt_print_to_stderr(" - ");
@@ -547,8 +538,8 @@ void shbt_print_signal(int sig_num, siginfo_t* info) {
 #ifdef SIGSYS
     if (sig_num == SIGSYS) {
       shbt_print_to_stderr("  ");
-      const struct shbt_signal_code_info* code_info = shbt_get_signal_code_info(
-        sigsys_codes, info->si_code);
+      const struct shbt_signal_code_info* code_info =
+        shbt_get_signal_code_info(sigsys_codes, info->si_code);
       if (code_info != NULL) {
         shbt_print_to_stderr(code_info->code_name);
         shbt_print_to_stderr(" - ");
@@ -597,7 +588,8 @@ void shbt_sigaction_handler(int sig_num, siginfo_t* info, void* void_ucontext) {
     sigfillset(&sa.sa_mask);
     sa.sa_flags = SA_RESTART;
     if (sigaction(sig_num, &sa, NULL) < 0) {
-      shbt_print_to_stderr("SHBT: Error trying to restore default signal handler\n");
+      shbt_print_to_stderr(
+        "SHBT: Error trying to restore default signal handler\n");
       _exit(EXIT_FAILURE);
     }
     raise(sig_num);  // Reraise the signal for the default handler.
@@ -748,8 +740,7 @@ bool shbt_register_fatal_handlers() {
 #ifdef SIGXFSZ
     SIGXFSZ,
 #endif
-    0
-  };
+    0};
   return shbt_register_signal_handlers(
     sig_nums, (sizeof(sig_nums) / sizeof(int)) - 1,  // Ignore last 0.
     SHBT_EXIT_ACTION_EXIT, NULL);

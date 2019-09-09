@@ -23,8 +23,8 @@
 #define _XOPEN_SOURCE 500  // In case this wasn't already defined.
 #endif
 #include <signal.h>
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #include "shbt/shbt.h"
 

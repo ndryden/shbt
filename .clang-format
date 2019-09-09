@@ -1,0 +1,10 @@
+---
+Language: Cpp
+BasedOnStyle: Google
+AllowShortBlocksOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: false
+ConstructorInitializerIndentWidth: 2
+ContinuationIndentWidth: 2
+DerivePointerAlignment: false
+SpaceAfterCStyleCast: true
+...

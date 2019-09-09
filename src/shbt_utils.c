@@ -17,12 +17,12 @@
  */
 
 #define _XOPEN_SOURCE 500
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdint.h>
 #include <errno.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #include "shbt/shbt.h"
 #include "shbt/shbt_internal.h"
@@ -58,7 +58,7 @@ char* shbt_itoa(intptr_t i, char* buf, size_t size, int base, size_t pad) {
   // Handle negative numbers for base 10 only.
   if (i < 0 && base == 10) {
     // Negate i while avoiding overflow.
-    j = ((uintptr_t) (-(i + 1))) + 1;
+    j = ((uintptr_t)(-(i + 1))) + 1;
     // Ensure we have enough space to write the '-'.
     if (++n > size) {
       buf[0] = '\000';

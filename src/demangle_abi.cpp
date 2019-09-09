@@ -27,9 +27,9 @@
 
 #ifdef SHBT_USE_ABI_DEMANGLER
 
+#include <cxxabi.h>
 #include <stdlib.h>
 #include <string.h>
-#include <cxxabi.h>
 
 bool shbt_demangle(const char* mangled, char* out, size_t out_size) {
   if (out_size == 0) {
@@ -37,7 +37,8 @@ bool shbt_demangle(const char* mangled, char* out, size_t out_size) {
   }
   size_t abi_out_size;
   int abi_status;
-  char* abi_out = abi::__cxa_demangle(mangled, NULL, &abi_out_size, &abi_status);
+  char* abi_out =
+    abi::__cxa_demangle(mangled, NULL, &abi_out_size, &abi_status);
   if (abi_status != 0) {
     if (abi_out != NULL) {
       free(abi_out);

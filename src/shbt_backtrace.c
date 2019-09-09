@@ -14,8 +14,8 @@
  */
 
 #define _XOPEN_SOURCE 500
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define UNW_LOCAL_ONLY  // Only need the local API for libunwind.
@@ -99,6 +99,6 @@ size_t shbt_get_stack_depth() {
   unw_cursor_t cursor;
   unw_init_local(&cursor, &context);
   size_t cur_frame = 0;
-  for (; unw_step(&cursor) > 0; ++cur_frame);
+  for (; unw_step(&cursor) > 0; ++cur_frame) {}
   return cur_frame;
 }
